@@ -3,15 +3,29 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
+
 public class OnCollision : MonoBehaviour
 {
-    [SerializeField] float sceneSwitchTime = 3f;
+    bool isTransitioning = false;
+    [SerializeField] AudioClip crashExplosion;
+    [SerializeField] AudioClip finishPlatform;
+    [SerializeField] float sceneSwitchTime = 2f;
+    [SerializeField] float levelLoadDelay = 1.5f;
+    AudioSource audioSource;
+    
+    void Start() 
+    {
+        audioSource = GetComponent<AudioSource>();
+    }
+
     private void OnCollisionEnter(Collision other) 
     {
+        if (isTransitioning) { return; }
+        
         switch (other.gameObject.tag)
         {
             case "Finish":
-                LoadNextLevel();
+                StartSuccessSequence();
                 break;
             case "Friendly":
                 break;
@@ -22,25 +36,38 @@ public class OnCollision : MonoBehaviour
     }
 
     void LoadNextLevel()
-    {
+    { 
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex + 1;
         if (nextSceneIndex == SceneManager.sceneCountInBuildSettings)
-            {
-                nextSceneIndex = 0;
-            }
+        {
+            nextSceneIndex = 0;
+        }
         SceneManager.LoadScene(nextSceneIndex);
+        isTransitioning = false;
     }
 
     void ReloadLevel()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+        isTransitioning = false;
+    }
+
+    void StartSuccessSequence()
+    {
+        isTransitioning = true;
+        GetComponent<Movement>().enabled = false;
+        audioSource.Stop();
+        audioSource.PlayOneShot(finishPlatform, 0.2F);
+        Invoke("LoadNextLevel", levelLoadDelay);
     }
 
     void StartCrashSequence()
     {
+        isTransitioning = true;
         GetComponent<Movement>().enabled = false;
+        audioSource.Stop();
+        audioSource.PlayOneShot(crashExplosion, 0.4F);
         Invoke("ReloadLevel", sceneSwitchTime);
     }
-
 }

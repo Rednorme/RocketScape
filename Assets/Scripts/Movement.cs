@@ -6,16 +6,17 @@ public class Movement : MonoBehaviour
 {
     [SerializeField] float thrustSpeed = 1;
     [SerializeField] float rotationValue = 1;
-    Rigidbody rigidbody1;
-    Transform transform1;
+    Rigidbody rigidBody;
+    Transform transformVariable;
     AudioSource m_MyAudioSource;
+    [SerializeField] AudioClip mainEngine;
     bool m_Play;
 
     // Start is called before the first frame update
     void Start()
     {
-        rigidbody1 = GetComponent<Rigidbody>();
-        transform1 = GetComponent<Transform>();
+        rigidBody = GetComponent<Rigidbody>();
+        transformVariable = GetComponent<Transform>();
         m_MyAudioSource = GetComponent<AudioSource>();
         m_Play = true;
     }
@@ -54,21 +55,21 @@ public class Movement : MonoBehaviour
 
     void ApplyThrust(float speedOfThrust)
     {
-        rigidbody1.AddRelativeForce(Vector3.up * speedOfThrust * Time.deltaTime);
+        rigidBody.AddRelativeForce(Vector3.up * speedOfThrust * Time.deltaTime);
     }
 
     void ApplyRotation(float rotationSpeed)
     {
-        rigidbody1.freezeRotation = true;
+        rigidBody.freezeRotation = true;
         transform.Rotate(Vector3.forward * rotationSpeed * Time.deltaTime);
-        rigidbody1.freezeRotation = false;
+        rigidBody.freezeRotation = false;
     }
     
     void PlayAudio()
     {
         if (!m_MyAudioSource.isPlaying)
         {
-            m_MyAudioSource.Play();
+            m_MyAudioSource.PlayOneShot(mainEngine);
         }
     }
 }
