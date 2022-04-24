@@ -9,7 +9,7 @@ public class OnCollision : MonoBehaviour
     bool isTransitioning = false;
     [SerializeField] AudioClip crashExplosion;
     [SerializeField] AudioClip finishPlatform;
-    [SerializeField] float sceneSwitchTime = 2f;
+    [SerializeField] float respawnTime = 2f;
     [SerializeField] float levelLoadDelay = 1.5f;
     AudioSource audioSource;
     
@@ -68,6 +68,6 @@ public class OnCollision : MonoBehaviour
         GetComponent<Movement>().enabled = false;
         audioSource.Stop();
         audioSource.PlayOneShot(crashExplosion, 0.4F);
-        Invoke("ReloadLevel", sceneSwitchTime);
+        Invoke("ReloadLevel", respawnTime);
     }
 }
