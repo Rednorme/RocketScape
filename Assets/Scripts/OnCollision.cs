@@ -9,6 +9,9 @@ public class OnCollision : MonoBehaviour
     bool isTransitioning = false;
     [SerializeField] AudioClip crashExplosion;
     [SerializeField] AudioClip finishPlatform;
+
+    [SerializeField] ParticleSystem crashParticles;
+    [SerializeField] ParticleSystem finishParticles;
     [SerializeField] float respawnTime = 2f;
     [SerializeField] float levelLoadDelay = 1.5f;
     AudioSource audioSource;
@@ -59,6 +62,7 @@ public class OnCollision : MonoBehaviour
         GetComponent<Movement>().enabled = false;
         audioSource.Stop();
         audioSource.PlayOneShot(finishPlatform, 0.2F);
+        finishParticles.Play();
         Invoke("LoadNextLevel", levelLoadDelay);
     }
 
@@ -68,6 +72,7 @@ public class OnCollision : MonoBehaviour
         GetComponent<Movement>().enabled = false;
         audioSource.Stop();
         audioSource.PlayOneShot(crashExplosion, 0.4F);
+        crashParticles.Play();
         Invoke("ReloadLevel", respawnTime);
     }
 }
