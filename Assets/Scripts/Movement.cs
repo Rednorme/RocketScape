@@ -10,6 +10,10 @@ public class Movement : MonoBehaviour
     Transform transformVariable;
     AudioSource m_MyAudioSource;
     [SerializeField] AudioClip mainEngine;
+    
+    [SerializeField] ParticleSystem leftThrusterParticles;
+    [SerializeField] ParticleSystem rightThrusterParticles;
+    [SerializeField] ParticleSystem rocketJetParticles;
     bool m_Play;
 
     // Start is called before the first frame update
@@ -34,10 +38,15 @@ public class Movement : MonoBehaviour
         {
             PlayAudio();
             ApplyThrust(thrustSpeed);
+            if (!rocketJetParticles.isPlaying)
+            {
+                rocketJetParticles.Play();
+            }
         }
         else
         {
             m_MyAudioSource.Stop();
+            rocketJetParticles.Stop();
         }
     }
 
@@ -46,10 +55,25 @@ public class Movement : MonoBehaviour
         if (Input.GetKey(KeyCode.A))
         {
             ApplyRotation(rotationValue);
+            
+            if (!leftThrusterParticles.isPlaying)
+            {
+                leftThrusterParticles.Play();
+            }
         }
         else if (Input.GetKey(KeyCode.D))
         {
             ApplyRotation(-rotationValue);
+
+            if (!rightThrusterParticles.isPlaying)
+            {
+                rightThrusterParticles.Play();
+            }
+        }
+        else
+        {
+            leftThrusterParticles.Stop();
+            rightThrusterParticles.Stop();
         }
     }
 
