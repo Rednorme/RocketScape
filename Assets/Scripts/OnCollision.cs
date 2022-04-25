@@ -8,6 +8,8 @@ public class OnCollision : MonoBehaviour
 {
     bool isTransitioning = false;
 
+    bool collisionDisabled = false;
+
     AudioSource audioSource;
     [SerializeField] AudioClip crashExplosion;
     [SerializeField] AudioClip finishPlatform;
@@ -23,9 +25,14 @@ public class OnCollision : MonoBehaviour
         audioSource = GetComponent<AudioSource>();
     }
 
+    void Update() 
+    {
+        CheatDebugKeys();
+    }
+
     void OnCollisionEnter(Collision other) 
     {
-        if (isTransitioning) { return; }
+        if (isTransitioning || collisionDisabled) { return; }
         
         switch (other.gameObject.tag)
         {
@@ -40,7 +47,7 @@ public class OnCollision : MonoBehaviour
         }
     }
 
-    void LoadNextLevel()
+    public void LoadNextLevel()
     { 
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex + 1;
@@ -76,5 +83,25 @@ public class OnCollision : MonoBehaviour
         audioSource.PlayOneShot(crashExplosion, 0.4F);
         crashParticles.Play();
         Invoke("ReloadLevel", respawnTime);
+    }
+
+    void CheatDebugKeys()
+    {
+        if (Input.GetKey(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+
+        if (Input.GetKey(KeyCode.C))
+        {
+            if (!collisionDisabled)
+            {
+                collisionDisabled = true;
+            }
+            else
+            {
+                collisionDisabled = false;
+            }
+        }
     }
 }
