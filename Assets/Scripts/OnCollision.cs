@@ -7,23 +7,32 @@ using UnityEngine.SceneManagement;
 public class OnCollision : MonoBehaviour
 {
     bool isTransitioning = false;
+
+    bool collisionDisabled = false;
+
+    AudioSource audioSource;
     [SerializeField] AudioClip crashExplosion;
     [SerializeField] AudioClip finishPlatform;
 
     [SerializeField] ParticleSystem crashParticles;
     [SerializeField] ParticleSystem finishParticles;
+
     [SerializeField] float respawnTime = 2f;
     [SerializeField] float levelLoadDelay = 1.5f;
-    AudioSource audioSource;
     
     void Start() 
     {
         audioSource = GetComponent<AudioSource>();
     }
 
-    private void OnCollisionEnter(Collision other) 
+    void Update() 
     {
-        if (isTransitioning) { return; }
+        CheatDebugKeys();
+    }
+
+    void OnCollisionEnter(Collision other) 
+    {
+        if (isTransitioning || collisionDisabled) { return; }
         
         switch (other.gameObject.tag)
         {
@@ -38,7 +47,7 @@ public class OnCollision : MonoBehaviour
         }
     }
 
-    void LoadNextLevel()
+    public void LoadNextLevel()
     { 
         int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
         int nextSceneIndex = currentSceneIndex + 1;
@@ -74,5 +83,25 @@ public class OnCollision : MonoBehaviour
         audioSource.PlayOneShot(crashExplosion, 0.4F);
         crashParticles.Play();
         Invoke("ReloadLevel", respawnTime);
+    }
+
+    void CheatDebugKeys()
+    {
+        if (Input.GetKey(KeyCode.L))
+        {
+            LoadNextLevel();
+        }
+
+        if (Input.GetKey(KeyCode.C))
+        {
+            if (!collisionDisabled)
+            {
+                collisionDisabled = true;
+            }
+            else
+            {
+                collisionDisabled = false;
+            }
+        }
     }
 }

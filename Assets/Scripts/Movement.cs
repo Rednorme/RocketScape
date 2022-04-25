@@ -6,19 +6,22 @@ public class Movement : MonoBehaviour
 {
     [SerializeField] float thrustSpeed = 1;
     [SerializeField] float rotationValue = 1;
+
     Rigidbody rigidBody;
+
     Transform transformVariable;
+
     AudioSource m_MyAudioSource;
     [SerializeField] AudioClip mainEngine;
-    bool m_Play;
+    
+    [SerializeField] ParticleSystem leftThrusterParticles;
+    [SerializeField] ParticleSystem rightThrusterParticles;
+    [SerializeField] ParticleSystem rocketJetParticles;
 
     // Start is called before the first frame update
     void Start()
     {
-        rigidBody = GetComponent<Rigidbody>();
-        transformVariable = GetComponent<Transform>();
-        m_MyAudioSource = GetComponent<AudioSource>();
-        m_Play = true;
+        GetComponents();
     }
 
     // Update is called once per frame
@@ -28,29 +31,81 @@ public class Movement : MonoBehaviour
         ProcessRotation();
     }
 
+    void GetComponents()
+    {
+        rigidBody = GetComponent<Rigidbody>();
+        transformVariable = GetComponent<Transform>();
+        m_MyAudioSource = GetComponent<AudioSource>();
+    }
+
     void ProcessThrust()
     {
         if (Input.GetKey(KeyCode.Space))
         {
-            PlayAudio();
-            ApplyThrust(thrustSpeed);
+            StartThrusting();
         }
         else
         {
-            m_MyAudioSource.Stop();
+            StopThrusting();
         }
+    }
+
+    void StartThrusting()
+    {
+        ApplyThrust(thrustSpeed);
+        PlayEngineAudio();
+        if (!rocketJetParticles.isPlaying)
+        {
+            rocketJetParticles.Play();
+        }
+    }
+
+    void StopThrusting()
+    {
+        m_MyAudioSource.Stop();
+        rocketJetParticles.Stop();
     }
 
     void ProcessRotation()
     {
         if (Input.GetKey(KeyCode.A))
         {
-            ApplyRotation(rotationValue);
+            RotateLeft();
         }
         else if (Input.GetKey(KeyCode.D))
         {
-            ApplyRotation(-rotationValue);
+            RotateRight();
         }
+        else
+        {
+            StopRotating();
+        }
+    }
+
+    void RotateLeft()
+    {
+        ApplyRotation(rotationValue);
+
+        if (!leftThrusterParticles.isPlaying)
+        {
+            leftThrusterParticles.Play();
+        }
+    }
+
+    void RotateRight()
+    {
+        ApplyRotation(-rotationValue);
+
+        if (!rightThrusterParticles.isPlaying)
+        {
+            rightThrusterParticles.Play();
+        }
+    }
+
+    void StopRotating()
+    {
+        leftThrusterParticles.Stop();
+        rightThrusterParticles.Stop();
     }
 
     void ApplyThrust(float speedOfThrust)
@@ -65,7 +120,7 @@ public class Movement : MonoBehaviour
         rigidBody.freezeRotation = false;
     }
     
-    void PlayAudio()
+    void PlayEngineAudio()
     {
         if (!m_MyAudioSource.isPlaying)
         {
