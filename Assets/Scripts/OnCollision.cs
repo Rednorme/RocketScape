@@ -7,21 +7,23 @@ using UnityEngine.SceneManagement;
 public class OnCollision : MonoBehaviour
 {
     bool isTransitioning = false;
+
+    AudioSource audioSource;
     [SerializeField] AudioClip crashExplosion;
     [SerializeField] AudioClip finishPlatform;
 
     [SerializeField] ParticleSystem crashParticles;
     [SerializeField] ParticleSystem finishParticles;
+
     [SerializeField] float respawnTime = 2f;
     [SerializeField] float levelLoadDelay = 1.5f;
-    AudioSource audioSource;
     
     void Start() 
     {
         audioSource = GetComponent<AudioSource>();
     }
 
-    private void OnCollisionEnter(Collision other) 
+    void OnCollisionEnter(Collision other) 
     {
         if (isTransitioning) { return; }
         
