@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Obstacle
   - Friendly
+  - GameMusic
   layers:
   - Default
   - TransparentFX

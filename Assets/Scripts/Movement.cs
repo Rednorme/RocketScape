@@ -13,6 +13,7 @@ public class Movement : MonoBehaviour
 
     AudioSource m_MyAudioSource;
     [SerializeField] AudioClip mainEngine;
+    [SerializeField] AudioClip music;
     
     [SerializeField] ParticleSystem leftThrusterParticles;
     [SerializeField] ParticleSystem rightThrusterParticles;
@@ -22,6 +23,7 @@ public class Movement : MonoBehaviour
     void Start()
     {
         GetComponents();
+        PlaySoundtrack();
     }
 
     // Update is called once per frame
@@ -126,5 +128,10 @@ public class Movement : MonoBehaviour
         {
             m_MyAudioSource.PlayOneShot(mainEngine);
         }
+    }
+
+    void PlaySoundtrack()
+    {
+        m_MyAudioSource.PlayOneShot(music);
     }
 }
